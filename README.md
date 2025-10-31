@@ -185,7 +185,3 @@ Mainly looking for testers at this point, especially on platforms other than arc
 **Areas that need work**:
 
 - Cross-platform testing (especially macOS and WSL)
-
-## License
-
-TBD
