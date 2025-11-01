@@ -43,6 +43,9 @@ You can find free ambient audio at:
 - [BBC Sound Effects](https://sound-effects.bbcrewind.co.uk/) (Free for personal use)
 - [YouTube Audio Library](https://studio.youtube.com/channel/UCpPQv-FQTnGg93s6-rDNYBg/music) (Royalty-free)
 
+[Archive.org rain noise](https://archive.org/details/free-and-excellent-rain-sound-effect-gentle-and-relaxing-effect/Free+and+Excellent+Rain+Sound+Effect+-+Gentle+And+Relaxing+Effect!.mp4). Needs to be converted to audio, use ffmpeg -i input_video.mp4 output_audio.mp3
+[Archive.org white pink and brownian noise](https://archive.org/details/TenMinutesOfWhiteNoisePinkNoiseAndBrownianNoise/BrownianNoise.flac)
+
 ### Quick Test with System Sounds
 
 On Linux, you can use existing system sounds:
