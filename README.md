@@ -180,7 +180,7 @@ See `PLAN.md` for the complete roadmap.
 
 ## Contributing
 
-Mainly looking for testers at this point, especially on platforms other than arch linux on amd64 (the only thing I've tested on). Please don't directly contribute UI code at this point (unless it's a simple bugfix) as the alpha UI is temporary 
+Mainly looking for testers at this point, especially on platforms other than arch linux on amd64 (the only thing I've tested on). Please don't directly contribute UI code at this point (unless it's a simple bugfix) as the alpha UI is temporary
 
 **Areas that need work**:
 

@@ -32,3 +32,6 @@ demo_audio/*.opus
 
 # Test assets (generated for unit tests)
 test_assets/
+
+CLAUDE.md
+PLAN.md
