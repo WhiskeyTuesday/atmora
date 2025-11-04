@@ -35,14 +35,26 @@ pub fn build(b: *std.Build) void {
     exe.linkLibrary(zaudio_dep.artifact("miniaudio"));
 
     // Add C source files for termbox2 renderer
+    // On macOS, we need _DARWIN_C_SOURCE to get cfmakeraw and SIGWINCH
+    const c_flags_macos = [_][]const u8{
+        "-std=c11",
+        "-DTB_OPT_ATTR_W=32",
+        "-D_DARWIN_C_SOURCE",
+    };
+    const c_flags_linux = [_][]const u8{
+        "-std=c11",
+        "-DTB_OPT_ATTR_W=32",
+        "-D_POSIX_C_SOURCE=200809L",
+        "-D_DEFAULT_SOURCE",
+    };
+    const c_flags = if (target.result.os.tag == .macos)
+        &c_flags_macos
+    else
+        &c_flags_linux;
+
     exe.addCSourceFile(.{
         .file = b.path("vendor/clay-renderer/clay_termbox_impl.c"),
-        .flags = &.{
-            "-std=c11",
-            "-DTB_OPT_ATTR_W=32",
-            "-D_POSIX_C_SOURCE=200809L",
-            "-D_DEFAULT_SOURCE",
-        },
+        .flags = c_flags,
     });
 
     // Get clay.h from zclay's clay dependency
