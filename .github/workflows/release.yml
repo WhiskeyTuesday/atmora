@@ -1,0 +1,296 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v0.1.0, v1.2.3, etc.
+
+permissions:
+  contents: write  # Required to create releases
+
+jobs:
+  build-linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary
+        run: |
+          zig build -Doptimize=ReleaseSafe
+          cp zig-out/bin/atmora atmora-linux-x86_64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-linux-x86_64.tar.gz atmora-linux-x86_64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-x86_64
+          path: atmora-${{ github.ref_name }}-linux-x86_64.tar.gz
+
+  build-linux-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary (cross-compile to ARM64)
+        run: |
+          zig build -Doptimize=ReleaseSafe -Dtarget=aarch64-linux
+          cp zig-out/bin/atmora atmora-linux-aarch64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-linux-aarch64.tar.gz atmora-linux-aarch64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-aarch64
+          path: atmora-${{ github.ref_name }}-linux-aarch64.tar.gz
+
+  build-linux-riscv64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary (cross-compile to RISC-V)
+        run: |
+          zig build -Doptimize=ReleaseSafe -Dtarget=riscv64-linux
+          cp zig-out/bin/atmora atmora-linux-riscv64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-linux-riscv64.tar.gz atmora-linux-riscv64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-riscv64
+          path: atmora-${{ github.ref_name }}-linux-riscv64.tar.gz
+
+  build-freebsd-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary (cross-compile to FreeBSD)
+        run: |
+          zig build -Doptimize=ReleaseSafe -Dtarget=x86_64-freebsd
+          cp zig-out/bin/atmora atmora-freebsd-x86_64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-freebsd-x86_64.tar.gz atmora-freebsd-x86_64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: freebsd-x86_64
+          path: atmora-${{ github.ref_name }}-freebsd-x86_64.tar.gz
+
+  # OpenBSD build disabled: cross-compilation fails due to missing pthread.h in Zig's OpenBSD libc
+  # Would require native OpenBSD runner (not available on GitHub Actions)
+  # build-openbsd-x86_64:
+  #   runs-on: ubuntu-latest
+  #   ...
+
+  build-netbsd-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary (cross-compile to NetBSD)
+        run: |
+          zig build -Doptimize=ReleaseSafe -Dtarget=x86_64-netbsd
+          cp zig-out/bin/atmora atmora-netbsd-x86_64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-netbsd-x86_64.tar.gz atmora-netbsd-x86_64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: netbsd-x86_64
+          path: atmora-${{ github.ref_name }}-netbsd-x86_64.tar.gz
+
+  build-macos-aarch64:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary
+        run: |
+          zig build -Doptimize=ReleaseSafe
+          cp zig-out/bin/atmora atmora-macos-aarch64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-macos-aarch64.tar.gz atmora-macos-aarch64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-aarch64
+          path: atmora-${{ github.ref_name }}-macos-aarch64.tar.gz
+
+  build-macos-x86_64:
+    runs-on: macos-15-intel  # Intel macOS runner (macos-13 is deprecated)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build release binary
+        run: |
+          zig build -Doptimize=ReleaseSafe
+          cp zig-out/bin/atmora atmora-macos-x86_64
+
+      - name: Create tarball
+        run: |
+          tar czf atmora-${{ github.ref_name }}-macos-x86_64.tar.gz atmora-macos-x86_64 README.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-x86_64
+          path: atmora-${{ github.ref_name }}-macos-x86_64.tar.gz
+
+  create-release:
+    # Run even if some builds fail (we'll upload what succeeded)
+    if: always()
+    needs:
+      - build-linux-x86_64
+      - build-linux-aarch64
+      - build-linux-riscv64
+      - build-freebsd-x86_64
+      - build-netbsd-x86_64
+      - build-macos-aarch64
+      - build-macos-x86_64
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/linux-x86_64/*.tar.gz
+            artifacts/linux-aarch64/*.tar.gz
+            artifacts/linux-riscv64/*.tar.gz
+            artifacts/freebsd-x86_64/*.tar.gz
+            artifacts/netbsd-x86_64/*.tar.gz
+            artifacts/macos-aarch64/*.tar.gz
+            artifacts/macos-x86_64/*.tar.gz
+          body: |
+            ## atmora ${{ github.ref_name }}
+
+            Terminal ambient audio mixer
+
+            ### Downloads
+
+            **Available Binaries (provided for convenience, minimally tested):**
+            - **Linux x86_64**: `atmora-${{ github.ref_name }}-linux-x86_64.tar.gz`
+            - **Linux ARM64** (Raspberry Pi, ARM servers): `atmora-${{ github.ref_name }}-linux-aarch64.tar.gz`
+            - **Linux RISC-V**: `atmora-${{ github.ref_name }}-linux-riscv64.tar.gz`
+            - **macOS ARM64** (M1/M2/M3): `atmora-${{ github.ref_name }}-macos-aarch64.tar.gz`
+            - **macOS x86_64** (Intel): `atmora-${{ github.ref_name }}-macos-x86_64.tar.gz`
+            - **FreeBSD x86_64**: `atmora-${{ github.ref_name }}-freebsd-x86_64.tar.gz`
+            - **NetBSD x86_64**: `atmora-${{ github.ref_name }}-netbsd-x86_64.tar.gz`
+
+            **⚠️ Important:**
+            - These binaries are **minimally tested** (development happens on one Arch Linux x86_64 machine)
+            - They are provided for convenience only and may not work on your system
+            - Issues may include: missing audio drivers, libc version mismatches, platform-specific incompatibilities
+            - **If a binary doesn't work, build from source instead** (see instructions below)
+            - **OpenBSD**: No binary provided due to cross-compilation limitations. Build from source.
+
+            ### Building from Source
+            If the prebuilt binaries don't work (or you're on OpenBSD), build locally:
+            ```bash
+            git clone https://github.com/${{ github.repository }}
+            cd atmora
+            zig build -Doptimize=ReleaseSafe
+            ./zig-out/bin/atmora
+            ```
+            Building from source ensures compatibility with your specific system configuration.
+
+            ### Installation
+            ```bash
+            tar xzf atmora-*.tar.gz
+            ./atmora-*
+            ```
+
+            ### Requirements
+            - Terminal with 256-color support
+            - Audio output device
+            - Linux: ALSA, PulseAudio, or PipeWire
+            - macOS: CoreAudio (built-in)
+            - BSD: OSS or compatible audio system
+
+            See [README.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/README.md) for usage instructions.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
