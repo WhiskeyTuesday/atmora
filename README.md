@@ -6,6 +6,8 @@ Mix and layer various ambient sounds like cafe ambience, rain, ocean waves, and 
 
 *Please note: I am using this project to teach myself zig. The code is probably bad, un-idiomatic, etc. all blame belongs to claude code. In the case that I accidentally did something right all praise is to be heaped upon myself personally.*
 
+<img width="2522" height="1376" alt="screenshot-2025-11-04_18-14-57" src="https://github.com/user-attachments/assets/76661453-2917-482b-b6f4-efa6da0aa2e8" />
+
 ## Features
 
 ### Audio Mixing
